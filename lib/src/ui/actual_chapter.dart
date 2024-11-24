@@ -1,5 +1,5 @@
 import 'package:jellybook_epub_view/src/data/models/chapter_view_value.dart';
-import 'package:jellybook_epub_view/src/ui/jellybook_epub_view.dart';
+import 'package:jellybook_epub_view/src/epub_controller.dart';
 import 'package:flutter/material.dart';
 
 typedef ChapterBuilder = Widget Function(EpubChapterViewValue? chapter);

@@ -1,5 +1,5 @@
 import 'package:jellybook_epub_view/src/data/models/chapter.dart';
-import 'package:jellybook_epub_view/src/ui/jellybook_epub_view.dart';
+import 'package:jellybook_epub_view/src/epub_controller.dart';
 import 'package:flutter/material.dart';
 
 class EpubViewTableOfContents extends StatelessWidget {

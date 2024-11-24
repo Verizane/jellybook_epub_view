@@ -1,4 +1,9 @@
-part of '../ui/jellybook_epub_view.dart';
+import 'package:epubx/epubx.dart';
+import 'package:flutter/material.dart';
+import 'package:jellybook_epub_view/src/data/models/paragraph.dart';
+import 'package:jellybook_epub_view/src/enums/epub_view_loading_state.dart';
+import 'package:jellybook_epub_view/src/helpers/external_link_pressed.dart';
+import 'package:jellybook_epub_view/src/models/epub_view_state.dart';
 
 typedef EpubViewBuilder<T> = Widget Function(
   /// Build context
@@ -49,18 +54,12 @@ class EpubViewBuilders<T> {
 
   const EpubViewBuilders({
     required this.options,
-    this.builder = _EpubViewState._builder,
-    this.chapterBuilder = _EpubViewState._chapterBuilder,
-    this.chapterDividerBuilder = _EpubViewState._chapterDividerBuilder,
+    this.builder = EpubViewState.builder,
+    this.chapterBuilder = EpubViewState.chapterBuilder,
+    this.chapterDividerBuilder = EpubViewState.chapterDividerBuilder,
     this.loaderBuilder,
     this.errorBuilder,
   });
-}
-
-enum EpubViewLoadingState {
-  loading,
-  error,
-  success,
 }
 
 class DefaultBuilderOptions {

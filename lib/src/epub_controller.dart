@@ -1,4 +1,8 @@
-part of 'ui/jellybook_epub_view.dart';
+import 'package:flutter/material.dart';
+import 'package:jellybook_epub_view/src/data/models/chapter.dart';
+import 'package:jellybook_epub_view/src/data/models/chapter_view_value.dart';
+import 'package:jellybook_epub_view/src/enums/epub_view_loading_state.dart';
+import 'package:jellybook_epub_view/src/models/epub_view_state.dart';
 
 class EpubController {
   EpubController({
@@ -9,11 +13,11 @@ class EpubController {
   Future<EpubBook> document;
   final String? epubCfi;
 
-  _EpubViewState? _epubViewState;
+  EpubViewState? _epubViewState;
   List<EpubViewChapter>? _cacheTableOfContents;
   EpubBook? _document;
 
-  EpubChapterViewValue? get currentValue => _epubViewState?._currentValue;
+  EpubChapterViewValue? get currentValue => _epubViewState?.getCurrentValue();
 
   final isBookLoaded = ValueNotifier<bool>(false);
   final ValueNotifier<EpubViewLoadingState> loadingState =
@@ -24,7 +28,7 @@ class EpubController {
   final tableOfContentsListenable = ValueNotifier<List<EpubViewChapter>>([]);
 
   void jumpTo({required int index, double alignment = 0}) =>
-      _epubViewState?._itemScrollController?.jumpTo(
+      _epubViewState?.getItemScrollController()?.jumpTo(
         index: index,
         alignment: alignment,
       );
@@ -35,7 +39,7 @@ class EpubController {
     double alignment = 0,
     Curve curve = Curves.linear,
   }) =>
-      _epubViewState?._itemScrollController?.scrollTo(
+      _epubViewState?.getItemScrollController()?.scrollTo(
         index: index,
         duration: duration,
         alignment: alignment,
@@ -48,7 +52,7 @@ class EpubController {
     Duration duration = const Duration(milliseconds: 250),
     Curve curve = Curves.linear,
   }) {
-    _epubViewState?._gotoEpubCfi(
+    _epubViewState?.gotoEpubCfi(
       epubCfi,
       alignment: alignment,
       duration: duration,
@@ -56,16 +60,7 @@ class EpubController {
     );
   }
 
-  String? generateEpubCfi() => _epubViewState?._epubCfiReader?.generateCfi(
-        book: _document,
-        chapter: _epubViewState?._currentValue?.chapter,
-        paragraphIndex: _epubViewState?._getAbsParagraphIndexBy(
-          positionIndex: _epubViewState?._currentValue?.position.index ?? 0,
-          trailingEdge:
-              _epubViewState?._currentValue?.position.itemTrailingEdge,
-          leadingEdge: _epubViewState?._currentValue?.position.itemLeadingEdge,
-        ),
-      );
+  String? generateEpubCfi() => _epubViewState?.generateEpubCfi(_document);
 
   List<EpubViewChapter> tableOfContents() {
     if (_cacheTableOfContents != null) {
@@ -111,29 +106,33 @@ class EpubController {
     try {
       loadingState.value = EpubViewLoadingState.loading;
       _document = await document;
-      await _epubViewState!._init();
+      await _epubViewState!.init();
       tableOfContentsListenable.value = tableOfContents();
       loadingState.value = EpubViewLoadingState.success;
     } catch (error) {
-      _epubViewState!._loadingError = error is Exception
+      _epubViewState!.setLoadingError(error is Exception
           ? error
-          : Exception('An unexpected error occurred');
+          : Exception('An unexpected error occurred'));
       loadingState.value = EpubViewLoadingState.error;
     }
   }
 
   int _getChapterStartIndex(int index) =>
-      index < _epubViewState!._chapterIndexes.length
-          ? _epubViewState!._chapterIndexes[index]
+      index < _epubViewState!.getChapterIndexes().length
+          ? _epubViewState!.getChapterIndexes()[index]
           : 0;
 
-  void _attach(_EpubViewState epubReaderViewState) {
+  void attach(EpubViewState epubReaderViewState) {
     _epubViewState = epubReaderViewState;
 
     _loadDocument(document);
   }
 
-  void _detach() {
+  void detach() {
     _epubViewState = null;
+  }
+
+  EpubBook? getInternalEpubBook() {
+    return _document;
   }
 }

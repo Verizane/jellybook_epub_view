@@ -1,0 +1,1 @@
+typedef ExternalLinkPressed = void Function(String href);
