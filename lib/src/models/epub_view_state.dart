@@ -133,7 +133,7 @@ class EpubViewState extends State<JellybookEpubView> {
 
   void _onLinkPressed(String href) {
     if (href.contains('://')) {
-      widget.onExternalLinkPressed?.call(href);
+      widget.onExternalLinkPressed.call(href);
       return;
     }
 
@@ -389,8 +389,7 @@ class EpubViewState extends State<JellybookEpubView> {
   }
 
   Image? _getCoverImage() {
-    if (widget.controller.getInternalEpubBook()!.Content!.Images!.entries.first.key !=
-        null) {
+    if (widget.controller.getInternalEpubBook()!.Content!.Images!.entries.isNotEmpty) {
       final coverImage = widget
           .controller.getInternalEpubBook()!.Content!.Images!.entries.first.value.Content;
       // save the image to files
